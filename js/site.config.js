@@ -79,10 +79,12 @@ window.SITE = {
 
   /* The "all my links" button at the bottom — this is what ties the release
      page back to tbp-links. Set url to '' to hide the whole button. */
+  /* `mark` overrides the <img src> in index.html — set it here, not there.
+     Omit it entirely to drop the image and show the label alone. */
   hub: {
     url: 'https://tbp-links.vercel.app/',
     label: 'Tall, Black, & Propagated',
-    mark: 'assets/monstera-leaf.png'
+    mark: 'assets/CARE250.png'
   },
 
   /* ----------------------------------------------------------- artist links */
