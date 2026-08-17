@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loading…</title>
+<meta name="description" content="" data-meta-description>
+<meta property="og:type" content="music.album">
+<meta property="og:title" content="" data-meta-og-title>
+<meta property="og:description" content="" data-meta-og-description>
+<meta property="og:image" content="assets/cover.jpg" data-meta-og-image>
+
+<link rel="icon" type="image/png" href="assets/CARE250.png">
+<link rel="apple-touch-icon" href="assets/CARE250.png">
+
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="page">
+
+  <!-- ===== Banner: blurred backdrop + cover card + share rail ===== -->
+  <header class="banner" data-banner>
+    <div class="banner__backdrop" data-backdrop aria-hidden="true"></div>
+
+    <h1 class="sr-only" data-semantic-title></h1>
+
+    <div class="banner__inner">
+      <div class="cover-card" data-cover-card>
+        <div class="cover-card__art">
+          <img class="cover-card__image" data-cover-image src="" alt="">
+          <button class="cover-card__overlay" data-cover-overlay type="button" aria-label="Play"></button>
+        </div>
+
+        <section class="tracks" aria-label="Tracks">
+          <ul class="tracks__list" data-tracks-list></ul>
+        </section>
+      </div>
+
+      <div class="share-rail" data-share-rail>
+        <a class="pill-button" data-follow-button target="_blank" rel="noopener" hidden></a>
+        <button class="pill-button pill-button--share" data-share-button type="button">share</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== Main: title, services, notes, links ===== -->
+  <main class="main">
+    <div class="main__block">
+      <div class="album-title" data-album-title></div>
+      <div class="artist-name">by <a class="artist-name__link" data-artist-link href="#"></a></div>
+
+      <div class="services">
+        <div class="services__label" data-services-label>Get the music:</div>
+        <div class="services__grid" data-services-grid></div>
+        <div class="services__divider" data-services-divider hidden></div>
+        <div class="services__physical" data-services-physical></div>
+      </div>
+    </div>
+
+    <div class="main__block">
+      <p class="notes" data-notes></p>
+      <div class="release-date" data-release-date></div>
+
+      <nav class="social" aria-label="Artist links">
+        <div class="social__list" data-social-list></div>
+      </nav>
+
+      <!-- Back to the link hub -->
+      <a class="hub-link" data-hub-link href="#" target="_blank" rel="noopener" hidden>
+        <img class="hub-link__mark" data-hub-mark src="assets/CARE250.png" alt="">
+        <span class="hub-link__text" data-hub-text></span>
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p class="footer__note" data-footer-note></p>
+  </footer>
+
+  <audio data-audio preload="none"></audio>
+
+  <script src="js/brand-icons.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/site.config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

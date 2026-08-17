@@ -1,0 +1,612 @@
+/* ==========================================================================
+   Tall, Black & Propagated — release page
+
+   Layout follows the HearNow structure (400px cover card over a blurred
+   backdrop, then a centred column of services, notes and links). The visual
+   language is TBP's, shared with tbp-links.vercel.app: Woodsmoke ground,
+   frosted Woodsmoke cards with a Locust hairline, Everglade hover, Locust
+   icons, Cararra text, staggered fade-up on entry.
+   ========================================================================== */
+
+:root {
+  /* --- Brand palette ---------------------------------------------------- */
+  --woodsmoke:    #0F1110;  /* background            */
+  --charcoal:     #2A2D2B;  /* secondary background  */
+  --everglade:    #1F3A2E;  /* headers / hover       */
+  --axolotl:      #4E6B4A;  /* accents / buttons     */
+  --walnut-brown: #6B4F3A;  /* warm contrast         */
+  --shadow:       #8A6A4F;  /* warm contrast         */
+  --locust:       #A3B18A;  /* subtle highlights     */
+  --cararra:      #EDECE8;  /* text                  */
+
+  /* --- Semantic tokens -------------------------------------------------- */
+  --bg: var(--woodsmoke);
+  --fg: var(--cararra);
+
+  /* The frosted card treatment, lifted verbatim from the links site so the
+     two pages read as one system. */
+  --card-bg: rgba(15, 17, 16, .7);
+  --card-border: rgba(163, 177, 138, .15);
+  --card-border-hover: rgba(163, 177, 138, .3);
+  --card-hover-bg: rgba(31, 58, 46, .75);
+  --card-blur: blur(8px);
+
+  --chip-bg: rgba(15, 17, 16, .7);
+  --chip-fg: var(--cararra);
+  --progress-fill: var(--locust);
+  --muted: rgba(237, 236, 232, .55);
+  --footer-fg: rgba(237, 236, 232, .35);
+
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-brand: 'Dancing Script', cursive;
+
+  --cover-card: 400px;
+  --column: 360px;
+  --wrapper: 850px;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body.page {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: inherit; }
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   Banner
+   ========================================================================== */
+
+.banner {
+  position: relative;
+  padding: 28px 0 24px;
+  overflow: hidden;
+}
+
+/* Oversized + blurred so the blur never reveals a soft edge at the sides. */
+.banner__backdrop {
+  position: absolute;
+  inset: -40px;
+  background-position: 50% 50%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: blur(16px);
+  transform: scale(1.06);
+}
+
+/* Woodsmoke scrim pulls whatever the cover art is back into the palette and
+   keeps Cararra text legible over it. */
+.banner__backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(31, 58, 46, .35), transparent 70%),
+    rgba(15, 17, 16, .72);
+}
+
+.banner__inner {
+  position: relative;
+  width: 100%;
+  max-width: var(--wrapper);
+  margin: 0 auto;
+}
+
+/* --- Cover card ----------------------------------------------------------- */
+
+.cover-card {
+  width: var(--cover-card);
+  margin: 0 auto;
+  padding: 15px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
+  animation: fadeSlideUp .5s ease both;
+}
+
+.cover-card__art {
+  position: relative;
+  line-height: 0;
+  border-radius: calc(var(--radius) - 6px);
+  overflow: hidden;
+}
+
+.cover-card__image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.cover-card__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: rgba(15, 17, 16, .55);
+  color: var(--cararra);
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity .4s;
+  z-index: 2;
+}
+
+.cover-card__overlay:hover,
+.cover-card__overlay:focus-visible,
+.cover-card__overlay.is-playing { opacity: 1; }
+
+.cover-card__overlay svg {
+  width: 88px;
+  height: 88px;
+  fill: currentColor;
+  filter: drop-shadow(0 2px 10px rgba(15, 17, 16, .7));
+}
+
+/* --- Track list ----------------------------------------------------------- */
+
+.tracks__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.track {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  font-size: 15px;
+}
+
+.track__number {
+  min-width: 24px;
+  margin: 14px 8px 0 0;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: var(--everglade);
+  color: var(--locust);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.track__play {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 40px;
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--locust);
+  cursor: pointer;
+  transition: transform .25s, color .25s;
+}
+
+.track__play:hover { transform: scale(1.08); color: var(--cararra); }
+
+.track__play svg {
+  width: 38px;
+  height: 38px;
+  fill: currentColor;
+}
+
+.track__play .icon-pause,
+.track__play.is-playing .icon-play { display: none; }
+.track__play.is-playing .icon-pause { display: block; }
+
+.track__progress {
+  position: relative;
+  flex: 1 1 auto;
+  height: 20px;
+  margin-top: 18px;
+  cursor: pointer;
+}
+
+.track__progress-bg,
+.track__progress-fill {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.track__progress-bg {
+  right: 0;
+  background: var(--locust);
+  opacity: .22;
+}
+
+.track__progress-fill {
+  width: 0;
+  background: var(--progress-fill);
+  transition: width .25s linear;
+}
+
+.track__meta {
+  flex: 0 0 auto;
+  margin-top: 12px;
+  text-align: right;
+}
+
+.track__duration {
+  margin: 2px 0 5px 12px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.track__name {
+  margin-left: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.track__clip {
+  color: var(--muted);
+  font-size: .8em;
+}
+
+/* Single-track releases show only the duration — the album title is the
+   track title, so repeating it reads as a duplicate. */
+.tracks--single .track__name,
+.tracks--single .track__number { display: none; }
+
+.tracks--multi .track__meta {
+  flex: 1 1 auto;
+  order: -1;
+  text-align: left;
+}
+
+.tracks--multi .track__progress { flex: 0 0 90px; }
+
+/* --- Share / follow rail -------------------------------------------------- */
+
+.share-rail {
+  position: absolute;
+  bottom: 0;
+  left: calc(50% + var(--cover-card) / 2 + 60px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  z-index: 20;
+}
+
+.pill-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  background: var(--chip-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
+  color: var(--chip-fg);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .2s, border-color .2s, transform .2s;
+}
+
+.pill-button:hover {
+  background: var(--card-hover-bg);
+  border-color: var(--card-border-hover);
+  transform: scale(1.03);
+}
+
+.pill-button svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+/* ==========================================================================
+   Main column
+   ========================================================================== */
+
+.main {
+  width: 100%;
+  max-width: var(--column);
+  margin: 34px auto 90px;
+  text-align: center;
+}
+
+.album-title {
+  padding-top: 7px;
+  margin-bottom: 6px;
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  overflow-wrap: break-word;
+}
+
+/* Dancing Script echoes the wordmark on the links site. */
+.artist-name {
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: 26px;
+  color: var(--locust);
+}
+
+.artist-name__link { text-decoration: none; }
+.artist-name__link:hover { text-decoration: underline; }
+
+/* --- Service buttons ------------------------------------------------------ */
+
+.services { margin-top: 26px; }
+
+.services__label {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.services__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.service-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 167px;
+  margin: 12px 5px 0;
+  padding: 11px 0 11px 16px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
+  color: var(--fg);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  text-decoration: none;
+  transition: background-color .2s, border-color .2s, transform .2s;
+  animation: fadeSlideUp .4s ease both;
+}
+
+.service-button:nth-of-type(1) { animation-delay: .10s; }
+.service-button:nth-of-type(2) { animation-delay: .16s; }
+.service-button:nth-of-type(3) { animation-delay: .22s; }
+.service-button:nth-of-type(4) { animation-delay: .28s; }
+.service-button:nth-of-type(5) { animation-delay: .34s; }
+.service-button:nth-of-type(6) { animation-delay: .40s; }
+
+.service-button:hover,
+.service-button:focus-visible {
+  background: var(--card-hover-bg);
+  border-color: var(--card-border-hover);
+  transform: scale(1.025);
+}
+
+.service-button:active { transform: scale(.98); }
+
+.service-button__icon {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  /* Brand marks carry their official colour, set inline by app.js. Anything
+     without a registered brand falls back to Locust, matching the links site.
+     --brand-override has to be a separate name: app.js writes --brand as an
+     inline style, which would outrank any rule trying to reassign it. */
+  color: var(--brand-override, var(--brand, var(--locust)));
+}
+
+.service-button__icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* Brands whose official mark is black ship a reversed-out white variant,
+   which each of them permits on a dark ground — and this page is always
+   dark, so the swap is unconditional. */
+[data-mono] { --brand-override: var(--cararra); }
+
+.service-button--label-only {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.services__divider {
+  width: 100%;
+  margin-top: 18px;
+  border-top: 1px solid var(--card-border);
+}
+
+.service-button--physical {
+  display: inline-flex;
+  width: auto;
+  padding-right: 20px;
+}
+
+/* --- Notes, release date, social ----------------------------------------- */
+
+.notes {
+  margin: 22px 0 0;
+  padding: 14px 18px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.release-date {
+  margin: 16px 0;
+  font-size: 13px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.release-date--upcoming {
+  padding-top: 4px;
+  font-size: 14px;
+  color: var(--locust);
+}
+
+.social__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+.social__link {
+  display: block;
+  width: 30px;
+  height: 30px;
+  color: var(--brand-override, var(--brand, var(--locust)));
+  transition: opacity .2s, transform .2s;
+}
+
+.social__link:hover { opacity: .75; transform: translateY(-2px); }
+
+.social__link svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* --- Back to the hub ------------------------------------------------------ */
+
+.hub-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 26px;
+  padding: 12px 22px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
+  color: var(--fg);
+  text-decoration: none;
+  transition: background-color .2s, border-color .2s, transform .2s;
+}
+
+.hub-link:hover {
+  background: var(--card-hover-bg);
+  border-color: var(--card-border-hover);
+  transform: scale(1.025);
+}
+
+.hub-link__mark {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+}
+
+.hub-link__text {
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--locust);
+  line-height: 1.1;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.footer {
+  max-width: var(--wrapper);
+  margin: 0 auto;
+  padding: 10px 20px 60px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--footer-fg);
+}
+
+.footer__note { margin: 0; }
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+/* Below this width the share rail no longer fits beside the card. */
+@media (max-width: 720px) {
+  .share-rail {
+    position: static;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 14px;
+  }
+}
+
+@media (max-width: 440px) {
+  :root { --cover-card: 100%; }
+
+  .cover-card {
+    width: auto;
+    margin: 0 12px;
+  }
+
+  .main {
+    max-width: none;
+    padding: 0 20px;
+  }
+
+  .service-button {
+    width: 100%;
+    max-width: 280px;
+    margin: 10px 0 0;
+  }
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: .01ms !important; }
+  .cover-card,
+  .service-button { animation: none; }
+}
