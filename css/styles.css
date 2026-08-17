@@ -157,8 +157,7 @@ a { color: inherit; }
 }
 
 .cover-card__overlay:hover,
-.cover-card__overlay:focus-visible,
-.cover-card__overlay.is-playing { opacity: 1; }
+.cover-card__overlay:focus-visible { opacity: 1; }
 
 .cover-card__overlay svg {
   width: 88px;
