@@ -90,7 +90,9 @@
     coverImage.src = SITE.coverImage || '';
     coverImage.alt = 'Cover art for ' + (SITE.albumTitle || '');
 
-    coverOverlay.innerHTML = icon('play') + icon('pause');
+    /* Play glyph only. The cover is a hover affordance, not a transport —
+       the track row below carries the real play/pause toggle. */
+    coverOverlay.innerHTML = icon('play');
   }
 
   /* ---------------------------------------------------------------- tracks */
@@ -169,7 +171,8 @@
       row.playButton.classList.toggle('is-playing', playing && index === currentIndex);
     });
 
-    coverOverlay.classList.toggle('is-playing', playing);
+    /* The glyph stays a play triangle, so the label is what tells assistive
+       tech which action the click actually performs. */
     coverOverlay.setAttribute('aria-label', playing ? 'Pause' : 'Play');
   }
 
