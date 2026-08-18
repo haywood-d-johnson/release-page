@@ -22,7 +22,7 @@ window.SITE = {
   backgroundImage: null,
 
   /* Short note under the buttons. Line breaks are preserved. */
-  notes: "Written after an essay I published about keeping plants alive through a season I couldn't manage. Control only ever shapes the conditions. It never promises the outcome. What's left is care — showing up, over and over, for something you might still lose. CARE is that piece with a beat under it.",
+  notes: "Written after an essay I published about keeping plants alive through a season I couldn't manage. Control only ever shapes the conditions. It never promises the outcome. What's left is care — showing up, over and over, for something you might still lose.",
 
   /* Optional link under the notes — the essay, video, or write-up the release
      came out of. Set url to '' (or delete the block) to hide it. */
