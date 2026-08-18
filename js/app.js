@@ -445,6 +445,17 @@
     renderBanner();
     renderTracks();
     renderTitles();
+
+    /* Deliberately after renderTitles: the markup ships a "Loading…"
+       placeholder title, and gtag's own pageview in the head would have
+       captured that instead of the release name. */
+    if (window.TBP_ANALYTICS) {
+      window.TBP_ANALYTICS.track('page_view', {
+        page_title: document.title,
+        page_location: location.href
+      });
+    }
+
     renderServices();
     renderNotes();
     renderShareRail();
