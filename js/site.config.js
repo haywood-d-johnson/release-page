@@ -22,7 +22,14 @@ window.SITE = {
   backgroundImage: null,
 
   /* Short note under the buttons. Line breaks are preserved. */
-  notes: "Add a few lines about this release — the story behind it, who played on it, where it was cut. Anything you'd want a listener or a booking agent to take away in ten seconds.",
+  notes: "Written after an essay I published about keeping plants alive through a season I couldn't manage. Control only ever shapes the conditions. It never promises the outcome. What's left is care — showing up, over and over, for something you might still lose. CARE is that piece with a beat under it.",
+
+  /* Optional link under the notes — the essay, video, or write-up the release
+     came out of. Set url to '' (or delete the block) to hide it. */
+  notesLink: {
+    label: 'Read the essay',
+    url: 'https://tallblackpropagated.substack.com/p/control-care-and-loss'
+  },
 
   /* Used for the page description and social share cards.
      Falls back to `notes` if omitted. */
@@ -86,22 +93,6 @@ window.SITE = {
     label: 'Tall, Black, & Propagated',
     mark: 'assets/CARE250.png'
   },
-
-  /* ----------------------------------------------------------- artist links */
-
-  /* Mirrors the socials on the hub page. Valid `type` values:
-     substack, youtube, tiktok, instagram, threads, facebook, x,
-     bandcamp, soundcloud, kofi, homepage, email.
-     Entries with an empty url are skipped. */
-  socialLinks: [
-    { type: 'substack',  url: 'https://substack.com/@tallblackpropagated' },
-    { type: 'youtube',   url: 'https://www.youtube.com/@tallblackpropagated' },
-    { type: 'tiktok',    url: 'https://tiktok.com/@tallblackpropagated' },
-    { type: 'instagram', url: 'https://www.instagram.com/tallblackpropagated' },
-    { type: 'threads',   url: 'https://www.threads.com/@tallblackpropagated' },
-    { type: 'kofi',      url: 'https://ko-fi.com/C8E221GLIB' },
-    { type: 'email',     url: 'mailto:tallblackpropagated@gmail.com?subject=Inquiry' }
-  ],
 
   /* ----------------------------------------------------------------- footer */
 

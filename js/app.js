@@ -183,6 +183,16 @@
   }
 
   function bindPlayer() {
+    /* Report whatever track is loaded right now, not a snapshot from bind
+       time — the player walks down the tracklist as songs end. */
+    if (window.TBP_ANALYTICS) {
+      window.TBP_ANALYTICS.bindAudio(audio, function () {
+        var list = SITE.tracks || [];
+        var current = currentIndex >= 0 ? list[currentIndex] : null;
+        return current ? current.title : (SITE.albumTitle || '');
+      });
+    }
+
     audio.addEventListener('play', syncPlayState);
     audio.addEventListener('pause', syncPlayState);
     audio.addEventListener('timeupdate', syncProgress);
@@ -262,6 +272,13 @@
       /* Only colour it if the mark is genuinely that brand's — a stand-in
          glyph stays Locust like the rest of the UI. */
       if (ICONS[service.id]) applyBrand(a.querySelector('.service-button__icon'), service.id);
+
+      /* Its own event name, not link_click — GA4 marks key events by name, and
+         a stream click is the conversion here while a social click is not. */
+      a.setAttribute('data-track', 'service_click');
+      a.setAttribute('data-track-id', service.id);
+      a.setAttribute('data-track-section', 'services');
+
       grid.appendChild(a);
     });
 
@@ -277,6 +294,9 @@
       button.innerHTML =
         '<span class="service-button__icon">' + icon('physical') + '</span>' +
         '<span class="service-button__label">' + physical.label + '</span>';
+      button.setAttribute('data-track', 'buy_click');
+      button.setAttribute('data-track-id', 'physical');
+      button.setAttribute('data-track-section', 'services');
       physicalHost.appendChild(button);
 
       /* The divider only earns its place when there is something on both sides. */
@@ -295,6 +315,17 @@
       notes.textContent = SITE.notes;
     } else {
       notes.hidden = true;
+    }
+
+    /* Optional pointer at whatever the release came out of — an essay, a
+       video, a longer write-up. The notes card itself is textContent only,
+       so a bare URL pasted in there would render as dead text; this is the
+       supported way to make it clickable. */
+    var notesLink = $('[data-notes-link]');
+    if (SITE.notesLink && SITE.notesLink.url) {
+      notesLink.hidden = false;
+      notesLink.href = SITE.notesLink.url;
+      notesLink.textContent = SITE.notesLink.label || 'Read more';
     }
 
     var host = $('[data-release-date]');
@@ -318,29 +349,6 @@
     }
   }
 
-  function renderSocial() {
-    var list = $('[data-social-list]');
-    var links = (SITE.socialLinks || []).filter(function (l) { return l.url; });
-
-    if (!links.length) {
-      list.parentNode.hidden = true;
-      return;
-    }
-
-    links.forEach(function (link) {
-      var a = document.createElement('a');
-      a.className = 'social__link';
-      a.href = link.url;
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.title = link.type;
-      a.setAttribute('aria-label', link.type);
-      a.innerHTML = icon(link.type);
-      applyBrand(a, link.type);
-      list.appendChild(a);
-    });
-  }
-
   function renderShareRail() {
     var follow = $('[data-follow-button]');
     if (SITE.spotifyFollowUrl) {
@@ -356,41 +364,23 @@
     if (!SITE.showShareButton) {
       share.hidden = true;
     } else {
-      share.innerHTML = icon('share') + '<span>' + LABELS.share + '</span>';
-      share.addEventListener('click', onShare);
+      /* data-share-label marks the text node so the module retitles it without
+         clobbering the icon beside it. */
+      share.innerHTML = icon('share') + '<span data-share-label>' + LABELS.share + '</span>';
+
+      if (window.TBP_SHARE) {
+        window.TBP_SHARE.bind(share, {
+          text: SITE.albumTitle + ' by ' + SITE.artistName,
+          idleLabel: LABELS.share,
+          copiedLabel: LABELS.shareCopied,
+          manualLabel: LABELS.shareCopyManually
+        });
+      }
     }
 
     if (!SITE.spotifyFollowUrl && !SITE.showShareButton) {
       $('[data-share-rail]').hidden = true;
     }
-  }
-
-  function onShare() {
-    var data = {
-      title: document.title,
-      text: SITE.albumTitle + ' by ' + SITE.artistName,
-      url: location.href
-    };
-
-    if (navigator.share) {
-      navigator.share(data).catch(function () { /* user dismissed the sheet */ });
-      return;
-    }
-
-    var button = $('[data-share-button]');
-    var label = button.querySelector('span');
-
-    /* clipboard is unavailable on insecure origins — say so rather than
-       silently doing nothing. */
-    if (!navigator.clipboard) {
-      label.textContent = LABELS.shareCopyManually;
-      return;
-    }
-
-    navigator.clipboard.writeText(location.href).then(function () {
-      label.textContent = LABELS.shareCopied;
-      setTimeout(function () { label.textContent = LABELS.share; }, 2000);
-    });
   }
 
   /* Link back to the artist's hub page (tbp-links). Hidden unless configured,
@@ -457,7 +447,6 @@
     renderTitles();
     renderServices();
     renderNotes();
-    renderSocial();
     renderShareRail();
     renderHubLink();
     renderFooter();

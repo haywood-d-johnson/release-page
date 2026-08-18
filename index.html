@@ -15,6 +15,17 @@
 
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/styles.css">
+
+<!-- Google tag (gtag.js) — same property as tbp-links, so the hop between the
+     two sites stays one funnel. Cross-domain measurement must list BOTH hosts
+     in GA4 Admin, or this counts as a self-referral and splits the session. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1SMYFR876Y"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-1SMYFR876Y');
+</script>
 </head>
 
 <body class="page">
@@ -38,7 +49,8 @@
       </div>
 
       <div class="share-rail" data-share-rail>
-        <a class="pill-button" data-follow-button target="_blank" rel="noopener" hidden></a>
+        <a class="pill-button" data-follow-button target="_blank" rel="noopener" hidden
+           data-track="link_click" data-track-id="spotify-follow" data-track-section="share-rail"></a>
         <button class="pill-button pill-button--share" data-share-button type="button">share</button>
       </div>
     </div>
@@ -60,14 +72,13 @@
 
     <div class="main__block">
       <p class="notes" data-notes></p>
+      <a class="notes-link" data-notes-link href="#" target="_blank" rel="noopener" hidden
+         data-track="link_click" data-track-id="essay" data-track-section="notes"></a>
       <div class="release-date" data-release-date></div>
 
-      <nav class="social" aria-label="Artist links">
-        <div class="social__list" data-social-list></div>
-      </nav>
-
       <!-- Back to the link hub -->
-      <a class="hub-link" data-hub-link href="#" target="_blank" rel="noopener" hidden>
+      <a class="hub-link" data-hub-link href="#" target="_blank" rel="noopener" hidden
+         data-track="link_click" data-track-id="hub" data-track-section="hub">
         <img class="hub-link__mark" data-hub-mark src="assets/CARE250.png" alt="">
         <span class="hub-link__text" data-hub-text></span>
       </a>
@@ -83,6 +94,8 @@
   <script src="js/brand-icons.js"></script>
   <script src="js/icons.js"></script>
   <script src="js/site.config.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/share.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

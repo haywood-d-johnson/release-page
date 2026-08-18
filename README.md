@@ -1,8 +1,8 @@
 # Tall, Black & Propagated — release page
 
 A one-page music release site: blurred cover backdrop, frosted cover card with
-an inline player, then a centred column of streaming buttons, notes, socials,
-and a link back to the hub at <https://tbp-links.vercel.app>.
+an inline player, then a centred column of streaming buttons, notes, and a
+link back to the hub at <https://tbp-links.vercel.app>.
 
 The layout follows the HearNow promo-page structure. The visual language is
 TBP's, shared with the links site — same palette, same frosted-glass cards,
@@ -24,8 +24,8 @@ mostly works, but audio and the share button behave better over `http://`.
 ## Editing it
 
 Everything on the page comes from **`js/site.config.js`** — title, artist,
-notes, release date, tracks, service links, socials, the hub button, and every
-UI string. That's the only file you need for a normal release.
+notes, release date, tracks, service links, the notes link, the hub button, and
+every UI string. That's the only file you need for a normal release.
 
 To swap in a new release:
 
@@ -62,19 +62,74 @@ With one track the list shows just the player and duration (the album title is
 already the track title). With two or more it becomes a numbered list with
 track names.
 
+### The notes link
+
+`notesLink` renders a quiet anchor under the notes card, for whatever the
+release came out of — an essay, a video, a longer write-up. It currently points
+at the Substack piece CARE was written from.
+
+The notes card itself is set with `textContent`, so a URL pasted into `notes`
+would render as dead, unclickable text. This is the supported way to make it a
+link. Set `notesLink.url` to `''` or delete the block to hide it.
+
 ### The hub button
 
-The `hub` block in the config is what ties this page back to tbp-links. Set
-`hub.url` to `''` to hide the button entirely and let the page stand alone.
+The `hub` block in the config is what ties this page back to tbp-links, and it
+is now the only route there — the social icon row that used to sit above it was
+removed so the two sites do not duplicate each other. The links page owns the
+socials; this page owns the release. Set `hub.url` to `''` to hide the button
+entirely and let the page stand alone.
 
 ## What's mocked out
 
 The config ships with example service URLs so the page renders complete —
 Spotify/Apple/Amazon/etc. point at **search pages**. Replace them with the real
-release links once it's live. The socials, Ko-fi, email, and hub link are real.
+release links once it's live. The Ko-fi and hub links are real.
 
 `artistUrl` currently points at the hub, on the assumption Haywood D and TBP
 are the same person. Change it if that's wrong.
+
+## Analytics
+
+GA4 (`G-1SMYFR876Y`) — the **same property as tbp-links**, deliberately. The two
+sites are one funnel, and splitting them into separate properties would make
+the links -> release hop unrecoverable.
+
+`js/analytics.js` and `js/share.js` are both shared verbatim with the links
+repo, so neither event names nor the share fallback chain can drift. Edit one,
+copy to the other.
+
+The share button is bound in `renderShareRail()` and takes its labels from
+`site.config.js`, so the wording stays config-driven while the behaviour stays
+shared. The text node carries `data-share-label` so the module can retitle it
+without clobbering the icon beside it.
+
+| Event            | Fires on                        | Parameters                            |
+|------------------|---------------------------------|---------------------------------------|
+| `service_click`  | a streaming service button      | link_id, link_section, link_url        |
+| `buy_click`      | buy from artist                 | link_id, link_section, link_url        |
+| `link_click`     | follow chip, essay link, hub    | link_id, link_section, link_url        |
+| `audio_play`     | first play of a track           | track_title                            |
+| `audio_progress` | 25 / 50 / 75% of a track        | audio_percent, track_title             |
+| `audio_complete` | played to the end               | track_title                            |
+| `share_click`    | share button                    | share_method (native/clipboard/manual) |
+
+Anchors opt in with `data-track`, `data-track-id` and `data-track-section`;
+the handler is delegated off the document, so buttons rendered by `app.js`
+after load need no extra wiring.
+
+`audio_*` has to be custom: GA4 enhanced measurement covers embedded YouTube
+only, so an `<audio>` element is otherwise invisible.
+
+**Two things that must be done in the GA4 console**, not here:
+
+1. **Cross-domain measurement.** `release-page-nu.vercel.app` and
+   `tbp-links.vercel.app` are different hosts. Without both listed under Admin
+   -> Data streams -> Configure tag settings -> Configure your domains, moving
+   between them ends the session and logs a self-referral.
+2. **Register the custom parameters** under Admin -> Custom definitions, or
+   they collect but never chart. Mark `service_click` and `buy_click` as key
+   events while you are in there.
 
 ## Structure
 
@@ -85,6 +140,8 @@ css/styles.css        palette tokens + all styling
 js/site.config.js     <- the file you edit
 js/brand-icons.js     GENERATED brand marks + official colours
 js/icons.js           hand-drawn generic UI icons; merges in brand marks
+js/analytics.js       SHARED with tbp-links — keep the two copies identical
+js/share.js           SHARED with tbp-links — keep the two copies identical
 js/app.js             renders the page from config, drives the audio player
 assets/fonts/         woff2 subsets + OFL license texts
 assets/               cover art, audio, monstera mark, banner

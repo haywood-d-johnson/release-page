@@ -460,7 +460,7 @@ a { color: inherit; }
   padding-right: 20px;
 }
 
-/* --- Notes, release date, social ----------------------------------------- */
+/* --- Notes and release date ---------------------------------------------- */
 
 .notes {
   margin: 22px 0 0;
@@ -475,6 +475,38 @@ a { color: inherit; }
   white-space: pre-line;
 }
 
+/* Sits under the notes card, deliberately quieter than a service button —
+   it is a footnote to the release, not a call to action competing with the
+   streaming links. */
+.notes-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .02em;
+  color: var(--locust);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+  transition: color .2s, border-color .2s;
+}
+
+.notes-link::after {
+  content: "\2192";
+  transition: transform .2s;
+}
+
+.notes-link:hover,
+.notes-link:focus-visible {
+  color: var(--cararra);
+  border-bottom-color: var(--card-border-hover);
+}
+
+.notes-link:hover::after,
+.notes-link:focus-visible::after { transform: translateX(2px); }
+
 .release-date {
   margin: 16px 0;
   font-size: 13px;
@@ -487,29 +519,6 @@ a { color: inherit; }
   padding-top: 4px;
   font-size: 14px;
   color: var(--locust);
-}
-
-.social__list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 14px;
-}
-
-.social__link {
-  display: block;
-  width: 30px;
-  height: 30px;
-  color: var(--brand-override, var(--brand, var(--locust)));
-  transition: opacity .2s, transform .2s;
-}
-
-.social__link:hover { opacity: .75; transform: translateY(-2px); }
-
-.social__link svg {
-  width: 100%;
-  height: 100%;
-  fill: currentColor;
 }
 
 /* --- Back to the hub ------------------------------------------------------ */
