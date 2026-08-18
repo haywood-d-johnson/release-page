@@ -24,7 +24,10 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-1SMYFR876Y');
+  /* send_page_view is off because this page's <title> is a placeholder until
+     app.js reads site.config.js. Firing here would report every pageview as
+     "Loading…". app.js sends it once the real title is in place. */
+  gtag('config', 'G-1SMYFR876Y', { send_page_view: false });
 </script>
 </head>
 
