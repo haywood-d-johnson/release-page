@@ -37,7 +37,14 @@ window.SITE = {
 
   /* ISO date. A future date renders the `upcoming` label, a past date the
      `released` one. Set to null to hide entirely. */
-  releaseDate: '2026-08-14',
+  releaseDate: null,
+
+  /* While this is truthy the streaming buttons stay visible but are disabled
+     and covered by a badge — people can see where it will land without being
+     sent to a page that has nothing on it yet. `true` uses labels.comingSoon;
+     a string is used verbatim, e.g. 'Out this fall'. Set false on release day.
+     "Buy from Artist" is left alone, since Ko-fi works regardless. */
+  comingSoon: true,
 
   /* ----------------------------------------------------------------- tracks */
 
@@ -104,6 +111,7 @@ window.SITE = {
      leave out keeps the default. {date} and {year} are substituted. */
   labels: {
     getTheMusic: 'Get the music',
+    comingSoon: 'Coming soon',
     upcoming: 'Out {date}',
     released: 'Released {year}',
     share: 'share',
