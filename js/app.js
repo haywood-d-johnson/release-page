@@ -252,6 +252,11 @@
 
     $('[data-services-label]').textContent = LABELS.getTheMusic;
 
+    /* A string overrides the label outright, so a release can say "Out this
+       fall" instead of the generic wording without touching labels. */
+    var upcoming = SITE.comingSoon;
+    var upcomingText = typeof upcoming === 'string' ? upcoming : LABELS.comingSoon;
+
     active.forEach(function (service) {
       var a = document.createElement('a');
       a.className = 'service-button service-button--' + service.id;
@@ -275,12 +280,31 @@
 
       /* Its own event name, not link_click — GA4 marks key events by name, and
          a stream click is the conversion here while a social click is not. */
-      a.setAttribute('data-track', 'service_click');
-      a.setAttribute('data-track-id', service.id);
-      a.setAttribute('data-track-section', 'services');
+      if (upcoming) {
+        /* Drop the href entirely rather than just styling it dead: a link you
+           cannot honour should not be a link to a keyboard or a screen reader
+           either. No data-track, so nothing logs a stream click for a record
+           that cannot be streamed. */
+        a.removeAttribute('href');
+        a.removeAttribute('target');
+        a.removeAttribute('rel');
+        a.setAttribute('aria-disabled', 'true');
+        a.setAttribute('tabindex', '-1');
+      } else {
+        a.setAttribute('data-track', 'service_click');
+        a.setAttribute('data-track-id', service.id);
+        a.setAttribute('data-track-section', 'services');
+      }
 
       grid.appendChild(a);
     });
+
+    if (upcoming && active.length) {
+      $('[data-services-stack]').classList.add('services--upcoming');
+      var badge = $('[data-services-badge]');
+      badge.hidden = false;
+      badge.textContent = upcomingText;
+    }
 
     var physical = SITE.physical;
     var physicalHost = $('[data-services-physical]');
