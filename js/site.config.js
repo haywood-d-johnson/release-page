@@ -22,7 +22,7 @@ window.SITE = {
   backgroundImage: null,
 
   /* Short note under the buttons. Line breaks are preserved. */
-  notes: "Written after an essay I published about keeping plants alive through a season I couldn't manage. Control only ever shapes the conditions. It never promises the outcome. What's left is care — showing up, over and over, for something you might still lose.",
+  notes: "Written after an essay I published about keeping plants alive through a season I couldn't manage. Control only ever shapes the conditions. It never promises the outcome. What's left is care — showing up, over and over, for something you might still lose. CARE is that piece with a beat under it.",
 
   /* Optional link under the notes — the essay, video, or write-up the release
      came out of. Set url to '' (or delete the block) to hide it. */
@@ -39,12 +39,13 @@ window.SITE = {
      `released` one. Set to null to hide entirely. */
   releaseDate: null,
 
-  /* While this is truthy the streaming buttons stay visible but are disabled
-     and covered by a badge — people can see where it will land without being
-     sent to a page that has nothing on it yet. `true` uses labels.comingSoon;
-     a string is used verbatim, e.g. 'Out this fall'. Set false on release day.
-     "Buy from Artist" is left alone, since Ko-fi works regardless. */
-  comingSoon: true,
+  /* Availability is per service — a store goes live as soon as its `url` is
+     filled in below, and anything still blank groups under "Coming soon".
+     This flag is the blunt override for the window before ANYTHING has
+     landed: truthy forces every button into that group regardless of links.
+     `true` uses labels.comingSoon; a string is used verbatim, e.g. 'Out this
+     fall'. "Buy from Artist" is left alone, since Ko-fi works regardless. */
+  comingSoon: false,
 
   /* ----------------------------------------------------------------- tracks */
 
@@ -61,21 +62,29 @@ window.SITE = {
 
   /* --------------------------------------------------------------- services */
 
-  /* Buttons render in this order. Delete any you don't need, or set
-     url to '' to hide that one. Valid `id` values with a shippable brand
-     mark: spotify, applemusic, itunes, pandora, deezer, bandcamp,
-     soundcloud, tidal, youtubemusic.
+  /* Buttons render in this order. A service with a `url` goes live; one with
+     an empty `url` drops into the "coming soon" group below the live ones,
+     so you can paste links in as the stores come back without touching
+     anything else. Delete an entry outright to remove it from the page.
+
+     Valid `id` values with a shippable brand mark: spotify, applemusic,
+     itunes, pandora, deezer, bandcamp, soundcloud, tidal, youtubemusic,
+     iheartradio.
 
      Any other id still works. Add `icon:` to fall back on a generic glyph
      ('stream', 'physical', 'homepage'); without one it renders as a centred
      text label. Amazon uses a stand-in — see README for why. */
   services: [
-    { id: 'spotify',     label: 'Spotify',      url: 'https://open.spotify.com/search/Haywood%20D' },
-    { id: 'applemusic',  label: 'Apple Music',  url: 'https://music.apple.com/us/search?term=Haywood%20D' },
-    { id: 'itunes',      label: 'iTunes',       url: 'https://music.apple.com/us/search?term=Haywood%20D' },
-    { id: 'amazonmusic', label: 'Amazon Music', url: 'https://music.amazon.com/search/Haywood+D', icon: 'stream' },
-    { id: 'pandora',     label: 'Pandora',      url: 'https://www.pandora.com/search/Haywood%20D' },
-    { id: 'deezer',      label: 'Deezer',       url: 'https://www.deezer.com/search/Haywood%20D' }
+    { id: 'spotify',      label: 'Spotify',       url: 'https://open.spotify.com/track/2ao70YCWAtafV2vEaMGa0T' },
+    { id: 'amazonmusic',  label: 'Amazon Music',  url: 'https://music.amazon.com/albums/B0HGHR21NV', icon: 'stream' },
+    { id: 'youtubemusic', label: 'YouTube Music', url: 'https://music.youtube.com/watch?v=O6lv90HtHE0' },
+    { id: 'tidal',        label: 'Tidal',         url: 'https://tidal.com/album/555526716' },
+    { id: 'iheartradio',  label: 'iHeartRadio',   url: 'https://www.iheart.com/artist/haywood-d-52074869/songs/care-427548203' },
+
+    /* Delivered, link not back yet — these render dimmed under "Coming soon".
+       Paste the URL in and the button goes live on the next load. */
+    { id: 'applemusic',   label: 'Apple Music',   url: '' },
+    { id: 'pandora',      label: 'Pandora',       url: '' }
   ],
 
   /* Full-width button below the divider. Set url to '' to hide. */
@@ -83,8 +92,9 @@ window.SITE = {
 
   /* --------------------------------------------------------- follow / share */
 
-  /* Spotify artist URL for the "Follow" chip. '' hides the chip. */
-  spotifyFollowUrl: 'https://open.spotify.com/search/Haywood%20D',
+  /* Spotify ARTIST URL for the "Follow" chip — not the release, so the
+     chip carries over unchanged to the next one. '' hides the chip. */
+  spotifyFollowUrl: 'https://open.spotify.com/artist/0wtq54p1D3BYXkoMO9BTC6',
 
   /* Show the share chip beside the cover. */
   showShareButton: true,
