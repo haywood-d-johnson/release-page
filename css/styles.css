@@ -450,40 +450,39 @@ a { color: inherit; }
 
 /* --- Coming soon ---------------------------------------------------------
 
-   The buttons stay on the page rather than being hidden: half the job of a
-   pre-release page is telling people WHERE it will land. They are just pushed
-   back and taken out of the tab order until the record is actually out.       */
+   Availability is per store. Anything without a link yet stays on the page —
+   half the job of a release page is telling people where it will land — but
+   sits in its own group below the live ones, pushed back and out of the tab
+   order until the link comes through.                                        */
 
 .services__stack {
   position: relative;
 }
 
-.services--upcoming .services__grid {
-  opacity: .35;
-  filter: grayscale(.6);
-  pointer-events: none;
-  user-select: none;
-}
-
+/* Heading for the not-yet-live group. */
 .services__badge {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  margin: 0;
-  padding: 9px 20px;
-  border: 1px solid var(--locust);
-  border-radius: 999px;
-  background: rgba(15, 17, 16, .88);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  margin: 26px 0 0;
   color: var(--locust);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: .08em;
   text-transform: uppercase;
-  white-space: nowrap;
+}
+
+.services__grid--soon {
+  margin-top: 2px;
+}
+
+.service-button--soon {
+  /* Both of these are needed. The static opacity is what applies when the
+     entrance animation is off (reduced motion); the animation override is
+     what applies when it runs, because .service-button animates to opacity 1
+     with fill-mode both, and an animated value outranks a static one. */
+  opacity: .4;
+  animation-name: fadeSlideUpDim;
+  filter: grayscale(.7);
   pointer-events: none;
+  user-select: none;
 }
 
 .services__divider {
@@ -649,6 +648,12 @@ a { color: inherit; }
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Same entrance, but lands dimmed — see .service-button--soon. */
+@keyframes fadeSlideUpDim {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: .4; transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
