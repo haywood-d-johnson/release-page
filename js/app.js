@@ -246,64 +246,86 @@
     }
   }
 
+  /* One service button. `isSoon` means we have nowhere to send people yet. */
+  function buildServiceButton(service, isSoon, soonText) {
+    var a = document.createElement('a');
+    a.className = 'service-button service-button--' + service.id;
+
+    /* Prefer the brand's own mark. `service.icon` names a generic glyph to
+       fall back on where we have no shippable logo (see README on Amazon).
+       With neither, the label centres on its own. */
+    var glyph = icon(service.id) || icon(service.icon);
+
+    a.classList.toggle('service-button--label-only', !glyph);
+    a.innerHTML =
+      (glyph ? '<span class="service-button__icon">' + glyph + '</span>' : '') +
+      '<span class="service-button__label">' + service.label + '</span>';
+
+    /* Only colour it if the mark is genuinely that brand's — a stand-in
+       glyph stays Locust like the rest of the UI. */
+    if (ICONS[service.id]) applyBrand(a.querySelector('.service-button__icon'), service.id);
+
+    if (isSoon) {
+      /* No href at all rather than a styled-dead link: one we cannot honour
+         should not be a link to a keyboard or a screen reader either. No
+         data-track, so nothing logs a stream click that cannot happen.
+         The group heading is visual; aria-label carries it per button for
+         anyone tabbing or reading the buttons out of context. */
+      a.classList.add('service-button--soon');
+      a.setAttribute('aria-disabled', 'true');
+      a.setAttribute('tabindex', '-1');
+      a.setAttribute('aria-label', service.label + ' — ' + soonText);
+    } else {
+      a.href = service.url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      /* Its own event name, not link_click — GA4 marks key events by name, and
+         a stream click is the conversion here while a social click is not. */
+      a.setAttribute('data-track', 'service_click');
+      a.setAttribute('data-track-id', service.id);
+      a.setAttribute('data-track-section', 'services');
+    }
+
+    return a;
+  }
+
   function renderServices() {
     var grid = $('[data-services-grid]');
-    var active = (SITE.services || []).filter(function (s) { return s.url; });
+    var stack = $('[data-services-stack]');
+    var all = SITE.services || [];
 
     $('[data-services-label]').textContent = LABELS.getTheMusic;
 
     /* A string overrides the label outright, so a release can say "Out this
        fall" instead of the generic wording without touching labels. */
-    var upcoming = SITE.comingSoon;
-    var upcomingText = typeof upcoming === 'string' ? upcoming : LABELS.comingSoon;
+    var forceSoon = !!SITE.comingSoon;
+    var soonText = typeof SITE.comingSoon === 'string' ? SITE.comingSoon : LABELS.comingSoon;
 
-    active.forEach(function (service) {
-      var a = document.createElement('a');
-      a.className = 'service-button service-button--' + service.id;
-      a.href = service.url;
-      a.target = '_blank';
-      a.rel = 'noopener';
+    /* Availability is per service: a store is live once it has a link. The
+       global comingSoon flag still forces the lot, for the window before
+       anything has landed anywhere. */
+    var live = forceSoon ? [] : all.filter(function (s) { return s.url; });
+    var soon = forceSoon ? all.slice() : all.filter(function (s) { return !s.url; });
 
-      /* Prefer the brand's own mark. `service.icon` names a generic glyph to
-         fall back on where we have no shippable logo (see README on Amazon).
-         With neither, the label centres on its own. */
-      var glyph = icon(service.id) || icon(service.icon);
-
-      a.classList.toggle('service-button--label-only', !glyph);
-      a.innerHTML =
-        (glyph ? '<span class="service-button__icon">' + glyph + '</span>' : '') +
-        '<span class="service-button__label">' + service.label + '</span>';
-
-      /* Only colour it if the mark is genuinely that brand's — a stand-in
-         glyph stays Locust like the rest of the UI. */
-      if (ICONS[service.id]) applyBrand(a.querySelector('.service-button__icon'), service.id);
-
-      /* Its own event name, not link_click — GA4 marks key events by name, and
-         a stream click is the conversion here while a social click is not. */
-      if (upcoming) {
-        /* Drop the href entirely rather than just styling it dead: a link you
-           cannot honour should not be a link to a keyboard or a screen reader
-           either. No data-track, so nothing logs a stream click for a record
-           that cannot be streamed. */
-        a.removeAttribute('href');
-        a.removeAttribute('target');
-        a.removeAttribute('rel');
-        a.setAttribute('aria-disabled', 'true');
-        a.setAttribute('tabindex', '-1');
-      } else {
-        a.setAttribute('data-track', 'service_click');
-        a.setAttribute('data-track-id', service.id);
-        a.setAttribute('data-track-section', 'services');
-      }
-
-      grid.appendChild(a);
+    live.forEach(function (service) {
+      grid.appendChild(buildServiceButton(service, false, soonText));
     });
 
-    if (upcoming && active.length) {
-      $('[data-services-stack]').classList.add('services--upcoming');
+    /* Stores that haven't come back yet stay on the page — half the job of a
+       release page is telling people where it will land — grouped under their
+       own heading rather than mixed in with the ones that work. */
+    if (soon.length) {
       var badge = $('[data-services-badge]');
       badge.hidden = false;
-      badge.textContent = upcomingText;
+      badge.textContent = soonText;
+
+      var soonGrid = document.createElement('div');
+      soonGrid.className = 'services__grid services__grid--soon';
+      soonGrid.setAttribute('data-services-soon-grid', '');
+      soon.forEach(function (service) {
+        soonGrid.appendChild(buildServiceButton(service, true, soonText));
+      });
+      stack.appendChild(soonGrid);
     }
 
     var physical = SITE.physical;
@@ -324,11 +346,11 @@
       physicalHost.appendChild(button);
 
       /* The divider only earns its place when there is something on both sides. */
-      if (active.length) $('[data-services-divider]').hidden = false;
+      if (all.length) $('[data-services-divider]').hidden = false;
     }
 
     /* With no services at all, the "Get the music:" label is noise. */
-    if (!active.length && !(physical && physical.url)) {
+    if (!all.length && !(physical && physical.url)) {
       $('[data-services-label]').hidden = true;
     }
   }
